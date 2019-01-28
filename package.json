@@ -7,7 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./",
     "pre-commit": "npm t",
-    "posttest": "npm run lint"
+    "posttest": "npm run lint",
+    "setup:dbs": "psql -f db/setup.sql",
+    "migrate:make": "knex migrate:make",
+    "migrate:latest": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback"
   },
   "repository": {
     "type": "git",
@@ -22,12 +26,18 @@
   "homepage": "https://github.com/northcoders/BE2-NC-Knews#readme",
   "dependencies": {
     "knex": "^0.15.2",
-    "pg": "^7.6.1"
+    "pg": "^7.6.1",
+    "express": "^4.16.4"
   },
   "devDependencies": {
+    "body-parser": "^1.18.3",
+    "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "husky": "^1.1.4"
+    "husky": "^1.1.4",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.9",
+    "supertest": "^3.4.2"
   }
 }

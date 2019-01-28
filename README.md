@@ -14,7 +14,7 @@ For this sprint ensure you have the eslint extension installed in VS-Code as it 
 
 ### NOTE 1:
 
-Read this README.md carefully! :) 
+Read this README.md carefully! :)
 
 ### Step 1 - Seeding
 
