@@ -11,7 +11,8 @@
     "setup:dbs": "psql -f db/setup.sql",
     "migrate:make": "knex migrate:make",
     "migrate:latest": "knex migrate:latest",
-    "migrate:rollback": "knex migrate:rollback"
+    "migrate:rollback": "knex migrate:rollback",
+    "seed-db": "npm run migrate:rollback && npm run migrate:latest && knex seed:run"
   },
   "repository": {
     "type": "git",
