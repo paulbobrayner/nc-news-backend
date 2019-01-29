@@ -4,6 +4,6 @@ const dbConfig = require('../knexfile');
 
 const connection = knex(dbConfig);
 
-//  connection object holds the methods we can use to interact with postgres database
+//  connection object holds the methods(functions) we can use to interact with postgres database
 
 module.exports = connection;

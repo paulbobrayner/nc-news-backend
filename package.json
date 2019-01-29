@@ -28,10 +28,10 @@
   "dependencies": {
     "knex": "^0.15.2",
     "pg": "^7.6.1",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "body-parser": "^1.18.3"
   },
   "devDependencies": {
-    "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
