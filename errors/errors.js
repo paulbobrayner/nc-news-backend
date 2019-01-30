@@ -1,9 +1,14 @@
 exports.handle400 = (err, req, res, next) => {
   const codes = {
-    23502: 'violates not null violation',
-    '22P02': 'invalid input syntax for type integer',
+    42703: 'request body provided is in incorrect format',
   };
-  console.log(err.code);
+  //  console.log(err);
   if (codes[err.code]) res.status(400).send({ msg: codes[err.code] });
+  else next(err);
+};
+
+exports.handle404 = (err, req, res, next) => {
+  //  console.log(err);
+  if (err.status === 404) res.status(404).send({ msg: err.message });
   else next(err);
 };

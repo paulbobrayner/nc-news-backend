@@ -30,7 +30,49 @@ describe('api', () => {
           expect(body.parties[0]).contains.keys('party', 'founded');
         });
     });
+    it('GET 200 will default to giving back 10 party objects (DEFAULT CASE)', () => {
+      return request
+      .get('/api/parties')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.parties).to.have.length(10)
+      })
+    })
+    it('GET 200 takes a limit query to change no of party objects ', () => {
+      return request
+      .get('/api/parties?limit=5')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.parties).to.have.length(5)
   });
+});
+    it('GET 200 will sort by party name (DEFAULT CASE) (DEFAULT DESC)', () => {
+      return request
+      .get('/api/parties')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.parties[0].party).to.equal('speaker')
+        expect(body.parties[9].party).to.equal('dup')
+    });
+  });
+it('GET 200 can change sort by column (DEFAULT CASE - ie desc) if same founded - will default to alphabetical party ', () => {
+  return request
+  .get('/api/parties?sort_by=founded')
+  .expect(200)
+  .then(({body}) => {
+    expect(body.parties[0].party).to.equal('speaker')
+    expect(body.parties[9].party).to.equal('labour')
+});
+});
+it('GET 200 each party has an mp_count property ', () => {
+  return request
+  .get('/api/parties')
+  .expect(200)
+  .then(({body}) => {
+    expect(body.parties[0].name.to.equal('scottish national party'),
+    expect(body.parties[0].mp_count).to.equal('6')
+});
+});
   describe('/mps/:mp_id', () => {
     it('GET status:200 responds with an mp object', () => {
       return request

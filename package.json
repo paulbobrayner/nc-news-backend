@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "psql -f db/setup.sql && mocha spec",
-    "lint": "eslint ./",
+    "lint": "eslint ./ --fix",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
     "setup:dbs": "psql -f db/setup.sql",
