@@ -7,7 +7,10 @@ exports.updateTopic = topic => connection
   .into('topics')
   .returning('*');
 
-exports.fetchArticlesFromTopic = ({ topic }, { limit = 10 }) => connection
+exports.fetchArticlesFromTopic = (
+  { topic },
+  { limit = 10, sort_by = 'created_at', order = 'desc' },
+) => connection
   .select(
     'articles.username as author',
     'articles.title',
@@ -21,7 +24,7 @@ exports.fetchArticlesFromTopic = ({ topic }, { limit = 10 }) => connection
   .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
   .groupBy('articles.article_id')
   .limit(limit)
-  .orderBy('created_at', 'desc')
+  .orderBy(sort_by, order)
   .where('articles.topic', '=', topic);
 
 exports.getTotalCount = ({ topic }) => connection
@@ -31,3 +34,12 @@ exports.getTotalCount = ({ topic }) => connection
   .rightJoin('topics', 'topics.slug', '=', 'articles.topic')
   .groupBy('topic')
   .where('articles.topic', '=', topic);
+
+exports.postArticle = (article, { topic }) => {
+  // console.log(article, topic);
+  const newArticle = { ...article, topic };
+  return connection
+    .insert(newArticle)
+    .into('articles')
+    .returning('*');
+};

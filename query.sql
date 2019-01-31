@@ -12,10 +12,11 @@
  --GROUP BY articles.article_id
 --;
 
-SELECT topic, COUNT(topic) AS total_count
-FROM articles
-RIGHT JOIN topics ON topics.slug = articles.topic
-WHERE articles.topic = 'mitch'
-GROUP BY topic;
+-- SELECT topic, COUNT(topic) AS total_count
+-- FROM articles
+-- RIGHT JOIN topics ON topics.slug = articles.topic
+-- WHERE articles.topic = 'mitch'
+-- GROUP BY topic;
+SELECT title FROM articles WHERE articles.topic = 'mitch' ORDER BY title ASC;
 
 
