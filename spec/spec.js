@@ -414,12 +414,63 @@ describe('api', () => {
         // console.log(body)
         expect(body.comment.votes).to.equal(-6);
       }));
-    // it('DELETE status:204 can delete an comment by article id and comment id', () => request
-    //   .delete('/api/articles/2/comments/2')
-    //   .expect(204)
-    //   .then(({ body }) => {
-    //     // console.log(body);
-    //     expect(body).to.eql({});
-    //   }));
+    it('DELETE status:204 can delete an comment by article id and comment id', () => request
+      .delete('/api/articles/2/comments/2')
+      .expect(204)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body).to.eql({});
+      }));
+  });
+  describe('/users', () => {
+    it('GET status:200 responds with an array of user objects', () => request
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).to.have.length(3);
+        expect(body.users[0]).contains.keys('username', 'avatar_url', 'name');
+      }));
+    it('POST status:201 responds with posted user object', () => {
+      const user = {
+        username: 'testingtesting',
+        avatar_url: 'https://thisisanewavatar.com',
+        name: 'paul2',
+      };
+      return request
+        .post('/api/users')
+        .send(user)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.user.name).to.equal('paul2');
+          expect(body.user).contains.keys('name', 'avatar_url', 'username');
+        });
+    });
+    it('POST status:400 bad request request body in incorrect format', () => {
+      const user = {
+        usernot: 'testingtesting',
+        avatarthefilm: 'https://thisisanewavatar.com',
+        name: 'paul2',
+      };
+      return request
+        .post('/api/users')
+        .send(user)
+        .expect(400);
+    });
+    it('GET status:200 gets user by username', () => request
+      .get('/api/users/butter_bridge')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user.username).to.equal('butter_bridge');
+        expect(body.user.name).to.equal('jonny');
+      }));
+    //  it.only('GET status:404 client uses non existent path', () => request.get('/api/users/wrongpath').expect(404));
+    it.only('GET status:200 responds with an array of article objects created by a user', () => request
+      .get('/api/users/butter_bridge/articles')
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.articles).to.have.length(3);
+        expect(body.articles[0].title).to.equal('Living in the shadow of a great man');
+      }));
   });
 });

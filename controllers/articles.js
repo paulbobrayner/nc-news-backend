@@ -7,6 +7,7 @@ const {
   postCommentById,
   removeArticle,
   modifyComment,
+  removeComment,
 } = require('../db/models/articles');
 
 exports.getArticles = (req, res, next) => {
@@ -65,5 +66,11 @@ exports.updateCommentById = (req, res, next) => {
   // console.log(req.params.article_id);
   modifyComment(req.params.article_id, req.params.comment_id, req.body.inc_votes)
     .then(([comment]) => res.status(200).send({ comment }))
+    .catch(next);
+};
+
+exports.deleteComment = (req, res, next) => {
+  removeComment(req.params.article_id, req.params.comment_id)
+    .then(() => res.status(204).send())
     .catch(next);
 };

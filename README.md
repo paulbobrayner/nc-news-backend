@@ -169,12 +169,12 @@ PATCH /api/articles/:article_id
 
 - this end-point should respond with the article you have just updated
 
-<!-- ```http
+```http
 DELETE /api/articles/:article_id
 ```
 
 - should delete the given article by `article_id`
-- should respond with 204 and no-content --> -->
+- should respond with 204 and no-content -->
 
 ```http
 GET /api/articles/:article_id/comments

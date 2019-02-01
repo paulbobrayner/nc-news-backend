@@ -36,11 +36,16 @@
 -- SELECT title, article_id, votes, username FROM articles
 
 
-SELECT comments.votes, comments.username
-FROM comments
-LEFT JOIN articles
-ON articles.article_id =comments.article_id
-WHERE articles.article_id = 1 AND comments.comment_id = 2
-ORDER BY comments.created_at DESC
+-- SELECT comments.votes, comments.username
+-- FROM comments
+-- LEFT JOIN articles
+-- ON articles.article_id =comments.article_id
+-- WHERE articles.article_id = 1 AND comments.comment_id = 2
+-- ORDER BY comments.created_at DESC
+-- ;
 
-;
+SELECT users.username, articles.title, articles.article_id  FROM users
+JOIN articles
+ON articles.username = users.username
+WHERE users.username = 'butter_bridge'
+ORDER BY articles.created_at DESC;

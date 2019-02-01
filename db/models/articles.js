@@ -84,3 +84,10 @@ exports.modifyComment = (article_id, comment_id, votes) => connection('comments'
   .where({ comment_id })
   .increment('votes', votes)
   .returning('*');
+
+exports.removeComment = (article_id, comment_id) => connection('comments')
+  .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
+  .where({ article_id })
+  .where({ comment_id })
+  .del()
+  .returning('*');
