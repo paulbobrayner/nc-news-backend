@@ -1,6 +1,7 @@
 exports.handle400 = (err, req, res, next) => {
   const codes = {
     42703: 'request body provided is in incorrect format',
+    '22P02': 'please provide id in number format',
   };
   //  console.log(err);
   if (codes[err.code]) res.status(400).send({ msg: codes[err.code] });

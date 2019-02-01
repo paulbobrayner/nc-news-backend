@@ -2,14 +2,16 @@ const connection = require('../connection');
 
 exports.fetchTopics = () => connection.select('*').from('topics');
 
-exports.updateTopic = topic => connection
+exports.postTopic = topic => connection
   .insert(topic)
   .into('topics')
   .returning('*');
 
 exports.fetchArticlesFromTopic = (
   { topic },
-  { limit = 10, sort_by = 'created_at', order = 'desc' },
+  {
+    limit = 10, sort_by = 'created_at', order = 'desc', p = 0,
+  },
 ) => connection
   .select(
     'articles.username as author',
@@ -24,6 +26,7 @@ exports.fetchArticlesFromTopic = (
   .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
   .groupBy('articles.article_id')
   .limit(limit)
+  .offset(p)
   .orderBy(sort_by, order)
   .where('articles.topic', '=', topic);
 
@@ -37,7 +40,7 @@ exports.getTotalCount = ({ topic }) => connection
 
 exports.postArticle = (article, { topic }) => {
   // console.log(article, topic);
-  const newArticle = { ...article, topic };
+  const newArticle = { ...article, topic }; // copy over article and add topic key onto it.
   return connection
     .insert(newArticle)
     .into('articles')

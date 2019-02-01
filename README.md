@@ -157,7 +157,7 @@ GET /api/articles/:article_id
   - `created_at`
   - `topic`
 
-```http
+<!-- ```http
 PATCH /api/articles/:article_id
 ```
 
@@ -174,7 +174,7 @@ DELETE /api/articles/:article_id
 ```
 
 - should delete the given article by `article_id`
-- should respond with 204 and no-content
+- should respond with 204 and no-content -->
 
 ```http
 GET /api/articles/:article_id/comments
@@ -194,8 +194,8 @@ Queries
 
 * limit, which limits the number of responses (defaults to 10)
 * sort_by, which sorts the articles by any valid column (defaults to date)
-* p, stands for page which specifies the page at which to start (calculated using limit)
-* sort_ascending, when "true" returns the results sorted in ascending order (defaults to descending)
+  <!-- * p, stands for page which specifies the page at which to start (calculated using limit) -->
+    <!-- * sort_ascending, when "true" returns the results sorted in ascending order (defaults to descending) -->
 
 ```http
 POST /api/articles/:article_id/comments

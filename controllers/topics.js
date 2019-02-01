@@ -1,6 +1,6 @@
 const {
   fetchTopics,
-  updateTopic,
+  postTopic,
   fetchArticlesFromTopic,
   getTotalCount,
   postArticle,
@@ -16,7 +16,7 @@ exports.getTopics = (req, res, next) => {
 
 exports.addTopic = (req, res, next) => {
   // console.log(req.body);
-  updateTopic(req.body)
+  postTopic(req.body)
     .then(([topic]) => {
       res.status(201).send({ topic });
     })
