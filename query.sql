@@ -33,14 +33,14 @@
 -- ORDER BY title ASC
 -- LIMIT 2 OFFSET 4;
 
--- SELECT title, article_id, votes username FROM articles
--- WHERE article_id = 4;
+-- SELECT title, article_id, votes, username FROM articles
+
 
 SELECT comments.votes, comments.username
 FROM comments
 LEFT JOIN articles
 ON articles.article_id =comments.article_id
-WHERE articles.article_id = 4
+WHERE articles.article_id = 1 AND comments.comment_id = 2
 ORDER BY comments.created_at DESC
 
 ;

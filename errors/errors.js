@@ -1,4 +1,5 @@
 exports.handle400 = (err, req, res, next) => {
+  // console.log(err);
   const codes = {
     42703: 'request body provided is in incorrect format',
     '22P02': 'please provide id in number format',

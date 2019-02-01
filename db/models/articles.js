@@ -42,9 +42,14 @@ exports.fetchArticleById = article_id => connection
   .groupBy('articles.article_id')
   .where('articles.article_id', '=', article_id);
 
-exports.modifyArticle = (article_id, patchData) => connection('articles')
+exports.modifyArticle = (article_id, votes) => connection('articles')
   .where({ article_id })
-  .increment('articles.votes', patchData)
+  .increment('votes', votes)
+  .returning('*');
+
+exports.removeArticle = article_id => connection('articles')
+  .where({ article_id })
+  .del()
   .returning('*');
 
 exports.fetchCommentsById = (article_id, { limit = 10, sort_by = 'created_at', p = 0 }) => connection
@@ -72,3 +77,19 @@ exports.postCommentById = (comment, { article_id }) => {
       .returning('*')
   );
 };
+
+exports.modifyComment = (article_id, comment_id, votes) => connection('comments')
+  .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
+  .where({ article_id })
+  .where({ comment_id })
+  .increment('votes', votes)
+  .returning('*');
+
+//   SELECT comments.votes, comments.username
+// FROM comments
+// LEFT JOIN articles
+// ON articles.article_id =comments.article_id
+// WHERE articles.article_id = 1 AND comments.comment_id = 4
+// ORDER BY comments.created_at DESC
+
+// ;

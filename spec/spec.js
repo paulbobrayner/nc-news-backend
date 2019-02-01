@@ -291,12 +291,19 @@ describe('api', () => {
       }));
     it('GET status:404 client uses non existent path', () => request.get('/api/articles/2000000').expect(404));
     it('PATCH status:200 can change the vote property up or down', () => request
-      .patch('/api/articles/4')
+      .patch('/api/articles/1')
       .send({ inc_votes: 3 })
-      .expect(20)
+      .expect(200)
       .then(({ body }) => {
         // console.log(body)
-        expect(body.articles.votes).to.equal('3');
+        expect(body.article.votes).to.equal(103);
+      }));
+    it('DELETE status:204 can delete an article by article id', () => request
+      .delete('/api/articles/2')
+      .expect(204)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body).to.eql({});
       }));
     it('GET status:200 test 1/2 responds with an array of comment objects for given articleid', () => request
       .get('/api/articles/5/comments')
@@ -391,5 +398,21 @@ describe('api', () => {
         .send(comment)
         .expect(400);
     });
+    it('PATCH status:200 can change the vote property up or down', () => request
+      .patch('/api/articles/1/comments/4')
+      .send({ inc_votes: 3 })
+      .expect(200)
+      .then(({ body }) => {
+        // console.log(body)
+        expect(body.comment.votes).to.equal(-97);
+      }));
+    it('PATCH status:200 can change the vote property up or down', () => request
+      .patch('/api/articles/1/comments/2')
+      .send({ inc_votes: -20 })
+      .expect(200)
+      .then(({ body }) => {
+        // console.log(body)
+        expect(body.comment.votes).to.equal(-6);
+      }));
   });
 });

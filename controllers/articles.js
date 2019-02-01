@@ -5,6 +5,8 @@ const {
   modifyArticle,
   fetchCommentsById,
   postCommentById,
+  removeArticle,
+  modifyComment,
 } = require('../db/models/articles');
 
 exports.getArticles = (req, res, next) => {
@@ -30,12 +32,16 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.updateArticleById = (req, res, next) => {
-  console.log(req.body.inc_votes);
+  // console.log(req.body.inc_votes);
   // console.log(req.params.article_id);
   modifyArticle(req.params.article_id, req.body.inc_votes)
-    .then(([article]) => {
-      res.status(200).send({ article });
-    })
+    .then(([article]) => res.status(200).send({ article }))
+    .catch(next);
+};
+
+exports.deleteArticle = (req, res, next) => {
+  removeArticle(req.params.article_id)
+    .then(() => res.status(204).send())
     .catch(next);
 };
 
@@ -52,5 +58,12 @@ exports.addCommentById = (req, res, next) => {
     .then(([comment]) => {
       res.status(201).send({ comment });
     })
+    .catch(next);
+};
+
+exports.updateCommentById = (req, res, next) => {
+  // console.log(req.params.article_id);
+  modifyComment(req.params.article_id, req.params.comment_id, req.body.inc_votes)
+    .then(([comment]) => res.status(200).send({ comment }))
     .catch(next);
 };
