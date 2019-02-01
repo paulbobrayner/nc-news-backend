@@ -414,5 +414,12 @@ describe('api', () => {
         // console.log(body)
         expect(body.comment.votes).to.equal(-6);
       }));
+    // it('DELETE status:204 can delete an comment by article id and comment id', () => request
+    //   .delete('/api/articles/2/comments/2')
+    //   .expect(204)
+    //   .then(({ body }) => {
+    //     // console.log(body);
+    //     expect(body).to.eql({});
+    //   }));
   });
 });

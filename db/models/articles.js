@@ -84,12 +84,3 @@ exports.modifyComment = (article_id, comment_id, votes) => connection('comments'
   .where({ comment_id })
   .increment('votes', votes)
   .returning('*');
-
-//   SELECT comments.votes, comments.username
-// FROM comments
-// LEFT JOIN articles
-// ON articles.article_id =comments.article_id
-// WHERE articles.article_id = 1 AND comments.comment_id = 4
-// ORDER BY comments.created_at DESC
-
-// ;
