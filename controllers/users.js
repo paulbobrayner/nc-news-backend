@@ -3,6 +3,7 @@ const {
   postUser,
   fetchUserByUsername,
   fetchArticlesByUser,
+  getTotalCount,
 } = require('../db/models/users');
 
 exports.getUsers = (req, res, next) => {
@@ -29,7 +30,10 @@ exports.getUserByUsername = (req, res, next) => {
 };
 
 exports.getArticlesByUser = (req, res, next) => {
-  fetchArticlesByUser(req.params.username).then((articles) => {
-    res.status(200).send({ articles });
-  });
+  fetchArticlesByUser(req.params.username, req.query)
+    .then(articles => Promise.all([getTotalCount(req.params.username), articles]))
+    .then(([total_count, articles]) => {
+      res.status(200).send({ total_count, articles });
+    })
+    .catch(next);
 };

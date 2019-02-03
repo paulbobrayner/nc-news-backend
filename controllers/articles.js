@@ -11,7 +11,7 @@ const {
 } = require('../db/models/articles');
 
 exports.getArticles = (req, res, next) => {
-  // console.log(req);
+  // console.log(req.params);
   fetchArticles(req.query)
     .then(articles => Promise.all([getTotalCount(), articles]))
     .then(([total_count, articles]) => {

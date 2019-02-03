@@ -256,7 +256,8 @@ GET /api/users/:username/articles
 
 Responds with:
 
-- a `total_count` property, displaying the total number of articles created by the given user
+<!-- - a `total_count` property, displaying the total number of articles created by the given user -->
+
 - an `articles` array of article objects created by the given user
 - each article should have:
   - `author` which is the `username` from the users table,

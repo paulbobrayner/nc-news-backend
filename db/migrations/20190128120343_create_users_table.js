@@ -4,9 +4,10 @@ exports.up = function (connection, Promise) {
     usersTable
       .string('username')
       .primary()
-      .unique();
-    usersTable.string('avatar_url');
-    usersTable.string('name');
+      .unique()
+      .notNullable();
+    usersTable.string('avatar_url').notNullable();
+    usersTable.string('name').notNullable();
   });
 };
 

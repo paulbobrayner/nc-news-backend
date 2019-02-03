@@ -12,7 +12,12 @@ exports.fetchUserByUsername = username => connection
   .from('users')
   .where('users.username', '=', username);
 
-exports.fetchArticlesByUser = username => connection
+exports.fetchArticlesByUser = (
+  username,
+  {
+    limit = 10, sort_by = 'created_at', order = 'desc', p = 1,
+  },
+) => connection
   .select(
     'articles.username as author',
     'articles.title',
@@ -21,12 +26,20 @@ exports.fetchArticlesByUser = username => connection
     'articles.created_at',
     'articles.topic',
   )
-  .from('users')
-  .leftJoin('articles', 'articles.username', '=', 'users.username')
-  .where('users.username', '=', username);
+  .from('articles')
+  .count({ comment_count: 'comments.article_id' })
+  .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
+  .groupBy('articles.article_id')
+  .limit(limit)
+  .offset((p - 1) * limit)
+  .where('articles.username', '=', username)
+  .orderBy(sort_by, order);
 
-// SELECT users.username, articles.title, articles.article_id  FROM users
-// LEFT JOIN articles
-// ON articles.username = users.username
-// WHERE users.username = 'butter_bridge'
-// ORDER BY articles.created_at DESC;
+// FIX TOTAL COUNT - copy topic which is working
+exports.getTotalCount = username => connection
+  .select('articles')
+  .count({ total_count: 'articles' })
+  .from('articles')
+// .rightJoin('articles', 'users.username', '=', 'articles.username')
+  .groupBy('articles')
+  .where('articles.username', '=', username);

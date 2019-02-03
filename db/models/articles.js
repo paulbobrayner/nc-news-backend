@@ -1,7 +1,7 @@
 const connection = require('../connection');
 
 exports.fetchArticles = ({
-  limit = 10, sort_by = 'created_at', order = 'desc', p = 0,
+  limit = 10, sort_by = 'created_at', order = 'desc', p = 1,
 }) => connection
   .select(
     'articles.username as author',
@@ -17,14 +17,15 @@ exports.fetchArticles = ({
   .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
   .groupBy('articles.article_id')
   .limit(limit)
-  .offset(p)
+  .offset((p - 1) * limit)
   .orderBy(sort_by, order);
 
+// BELOW IS BROKEN - FIX IT
 exports.getTotalCount = () => connection
   .select('articles')
-  .count({ total_count: 'articles' })
+  .count({ total_count: 'article_id' })
   .from('articles')
-  .groupBy('articles');
+  .groupBy('article_id');
 
 exports.fetchArticleById = article_id => connection
   .select(
@@ -52,7 +53,7 @@ exports.removeArticle = article_id => connection('articles')
   .del()
   .returning('*');
 
-exports.fetchCommentsById = (article_id, { limit = 10, sort_by = 'created_at', p = 0 }) => connection
+exports.fetchCommentsById = (article_id, { limit = 10, sort_by = 'created_at', p = 1 }) => connection
   .select(
     'comments.comment_id',
     'comments.votes',
@@ -64,7 +65,7 @@ exports.fetchCommentsById = (article_id, { limit = 10, sort_by = 'created_at', p
   .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
   .limit(limit)
   .orderBy(sort_by, 'desc')
-  .offset(p)
+  .offset((p - 1) * limit)
   .where('articles.article_id', '=', article_id);
 
 exports.postCommentById = (comment, { article_id }) => {

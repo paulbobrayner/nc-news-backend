@@ -24,7 +24,7 @@
 
 -- SELECT articles.title,
 -- COUNT(comments.article_id) AS comment_count
--- FROM articles
+-- FROM 
 -- --  ORDER BY articles.created_at DESC
 --  LEFT JOIN comments ON articles.article_id = comments.article_id
 --  GROUP BY articles.article_id;
@@ -44,8 +44,33 @@
 -- ORDER BY comments.created_at DESC
 -- ;
 
-SELECT users.username, articles.title, articles.article_id  FROM users
-JOIN articles
-ON articles.username = users.username
-WHERE users.username = 'butter_bridge'
-ORDER BY articles.created_at DESC;
+-- SELECT users.username, articles.title, articles.article_id,  
+-- -- COUNT(articles.article_id) AS comment_count
+-- FROM users
+-- JOIN articles
+-- ON articles.username = users.username
+-- WHERE users.username = 'butter_bridge'
+-- -- //GROUP BY articles.article_id
+-- ORDER BY articles.created_at DESC
+-- LIMIT 10;
+
+--    SELECT  articles.article_id, articles.title, articles.votes
+--    FROM articles
+-- LEFT JOIN comments ON articles.article_id = comments.article_id
+--    WHERE articles.username = 'icellusedkars'
+--    ORDER BY created_at ASC
+--    OFFSET 2 * LIMIT 2;
+
+SELECT articles.article_id, articles.username,
+COUNT (articles) AS total_count
+FROM articles
+GROUP BY articles;
+
+  
+
+-- SELECT articles.title, COUNT (articles.) AS total_count
+-- FROM articles
+-- GROUP BY articles.article_id
+-- WHERE articles.username = 'butter_bridge';
+
+

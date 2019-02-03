@@ -131,21 +131,21 @@ describe('api', () => {
       .get('/api/topics/mitch/articles ')
       .expect(200)
       .then(({ body }) => {
-        // console.log(body.articles);
         expect(body.articles[3].author).to.equal('rogersop');
       }));
     it('GET status:200 test 1/2 will order articles by page when requested, with a limit per page ', () => request
+      .get('/api/topics/mitch/articles?p=2&&limit=3 ')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].title).to.equal('Student SUES Mitch!');
+        expect(body.articles[1].article_id).to.equal(6);
+      }));
+    it('GET status:200 test 2/2 will order articles by page when requested, with a limit per page ', () => request
       .get('/api/topics/mitch/articles?p=2&&limit=2 ')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles[0].title).to.equal('Eight pug gifs that remind me of mitch');
-      }));
-    it('GET status:200 test 2/2 will order articles by page when requested, with a limit per page ', () => request
-      .get('/api/topics/mitch/articles?p=3&&limit=4 ')
-      .expect(200)
-      .then(({ body }) => {
-        // console.log(body.articles);
-        expect(body.articles[2].title).to.equal('Z');
+        expect(body.articles).to.have.length(2);
       }));
     it('POST status:201 responds with the posted article object', () => {
       const article = {
@@ -180,11 +180,11 @@ describe('api', () => {
         expect(body.articles[3].comment_count).to.equal('0');
         expect(body.articles[0]).contains.keys('comment_count');
       }));
-    it('GET status:200 displays the total number of articles', () => request
+    it.only('GET status:200 displays the total number of articles', () => request
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);
+        console.log(body);// THIS IS BROKEN
         expect(body).contains.keys('total_count');
       }));
     it('GET status:404 client uses non existent path', () => request.get('/api/newspaper').expect(404));
@@ -254,16 +254,16 @@ describe('api', () => {
       .get('/api/articles?p=3&&limit=3 ')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles[0].title).to.equal('Student SUES Mitch!');
-        expect(body.articles[2].title).to.equal('A');
+        expect(body.articles[0].title).to.equal('Z');
+        expect(body.articles[2].title).to.equal('They\'re not exactly dogs, are they?');
         expect(body.articles).to.have.length(3);
       }));
     it('GET status:200 will order articles by page when requested, with a limit per page with a requested sort by and order', () => request
       .get('/api/articles?p=4&&limit=2&&sort_by=title&&order=asc ')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles[0].title).to.equal('Living in the shadow of a great man');
-        expect(body.articles[1].title).to.equal('Moustache');
+        expect(body.articles[0].title).to.equal('Seven inspirational thought leaders from Manchester UK');
+        expect(body.articles[1].title).to.equal('Sony Vaio; or, The Laptop');
         expect(body.articles).to.have.length(2);
       }));
     it('GET status:200 client uses non existent path limit query but will respond with articles', () => request.get('/api/articles?limit=5billion').expect(200));
@@ -360,17 +360,19 @@ describe('api', () => {
         expect(body.comments[4].body).to.equal('I hate streaming eyes even more');
       }));
     it('GET status:200 will order comments by page requested- default limit 10 ', () => request
-      .get('/api/articles/1/comments?p=3')
+      .get('/api/articles/1/comments?p=2')
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments[2].body).to.equal('Lobster pot');
-        expect(body.comments[5].body).to.equal('git push origin master');
+        //  console.log(body);
+        expect(body.comments[2].body).to.equal('This morning, I showered for nine minutes.');
+        expect(body.comments[0].comment_id).to.equal(12);
       }));
     it('GET status:200 will order comments by page requested and with a limit per page', () => request
       .get('/api/articles/1/comments?p=3&&limit=3')
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments[0].body).to.equal('I hate streaming noses');
+        //  console.log(body)
+        expect(body.comments[0].body).to.equal('Delicious crackerbreads');
         expect(body.comments).to.have.length(3);
       }));
     it('POST status:201 responds with the posted topic object', () => {
@@ -463,14 +465,94 @@ describe('api', () => {
         expect(body.user.username).to.equal('butter_bridge');
         expect(body.user.name).to.equal('jonny');
       }));
-    //  it.only('GET status:404 client uses non existent path', () => request.get('/api/users/wrongpath').expect(404));
-    it.only('GET status:200 responds with an array of article objects created by a user', () => request
+    xit('GET status:404 client uses non existent path', () => request.get('/api/users/wrongpath').expect(404));
+    it('GET status:200 responds with an array of article objects created by a user', () => request
       .get('/api/users/butter_bridge/articles')
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
+        // console.log(body);
         expect(body.articles).to.have.length(3);
         expect(body.articles[0].title).to.equal('Living in the shadow of a great man');
+      }));
+    it('GET status:200 responds with a comment count property within article objects', () => request
+      .get('/api/users/butter_bridge/articles')
+      .expect(200)
+      .then(({ body }) => {
+        //  console.log(body.articles);
+        expect(body.articles[0].comment_count).to.equal('13');
+        expect(body.articles[0]).contains.keys('comment_count');
+      }));
+    xit('GET status:200 displays the total number of articles by user', () => request
+      .get('/api/users/butter_bridge/articles')
+      .expect(200)
+      .then(({ body }) => {
+        // console.log(body);
+        expect(body).contains.keys('total_count');
+      }));
+    it('GET status:200 will default to giving back 10 articles by user as max (DEFAULT CASE)', () => request
+      .get('/api/users/rogersop/articles')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.length(3);
+        expect(body.articles[0].title).to.equal('Student SUES Mitch!');
+      }));
+    it('GET status:200 will respond with requested limit of articles by user', () => request
+      .get('/api/users/icellusedkars/articles?limit=3')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.length(3);
+        expect(body.articles[0].title).to.equal('Sony Vaio; or, The Laptop');
+      }));
+    it('GET status:200 responds with articles by user sorted by date/created_at column - DESC default (DEFAULT CASE)', () => request
+      .get('/api/users/icellusedkars/articles')
+      .expect(200)
+      .then(({ body }) => {
+        //  console.log(body);
+        expect(body.articles[0].article_id).to.equal(2);
+        expect(body.articles[2].title).to.equal('A');
+      }));
+    it('GET status:200 responds with articles by user sorted by requested column - DESC default', () => request
+      .get('/api/users/icellusedkars/articles?sort_by=title')
+      .expect(200)
+      .then(({ body }) => {
+        //  console.log(body);
+        expect(body.articles[0].article_id).to.equal(7);
+        expect(body.articles[2].title).to.equal('Eight pug gifs that remind me of mitch');
+      }));
+    it('GET status:200 will order articles by user by descending  (DEFAULT CASE) (DEFAULT sorted by --> created_at/date', () => request
+      .get('/api/users/rogersop/articles ')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(4);
+        expect(body.articles[2].title).to.equal(
+          'Seven inspirational thought leaders from Manchester UK',
+        );
+      }));
+    it('GET status:200 will order articles by user in ascending order when requested (DEFAULT sorted by --> created_at/date', () => request
+      .get('/api/users/icellusedkars/articles?order=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(11);
+        expect(body.articles[2].title).to.equal('Z');
+      }));
+    it('GET status:200 will order articles by user by page starting at 1 (DEFAULT CASE) default limit 10 ', () => request
+      .get('/api/users/icellusedkars/articles ')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[3].title).to.equal('Z');
+      }));
+    it('GET status:200 will order articles by user by requested page default limit 10 ', () => request
+      .get('/api/users/icellusedkars/articles?p=2 ')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.eql([]);
+      }));
+    it('GET status:200 will order articles by user by requested page and limit', () => request
+      .get('/api/users/icellusedkars/articles?p=2&&limit=2 ')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.have.length(2);
+        expect(body.articles[0].title).to.equal('A');
       }));
   });
 });

@@ -10,7 +10,7 @@ exports.postTopic = topic => connection
 exports.fetchArticlesFromTopic = (
   { topic },
   {
-    limit = 10, sort_by = 'created_at', order = 'desc', p = 0,
+    limit = 10, sort_by = 'created_at', order = 'desc', p = 1,
   },
 ) => connection
   .select(
@@ -26,7 +26,7 @@ exports.fetchArticlesFromTopic = (
   .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
   .groupBy('articles.article_id')
   .limit(limit)
-  .offset(p)
+  .offset((p - 1) * limit)
   .orderBy(sort_by, order)
   .where('articles.topic', '=', topic);
 
