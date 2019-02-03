@@ -61,9 +61,9 @@
 --    ORDER BY created_at ASC
 --    OFFSET 2 * LIMIT 2;
 
-SELECT articles.article_id, articles.username,
-COUNT (articles) AS total_count
-FROM articles
+SELECT topics,
+COUNT (topics) AS total_count
+FROM topics
 GROUP BY articles;
 
   

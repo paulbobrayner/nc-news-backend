@@ -12,7 +12,7 @@ exports.fetchArticles = ({
     'articles.topic',
     'articles.body',
   )
-  .count({ comment_count: 'comments.article_id' })
+  .count({ comment_count: 'comments.comment_id' })
   .from('articles')
   .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
   .groupBy('articles.article_id')
@@ -23,7 +23,7 @@ exports.fetchArticles = ({
 // BELOW IS BROKEN - FIX IT
 exports.getTotalCount = () => connection
   .select('articles')
-  .count({ total_count: 'article_id' })
+  .count({ total_count: 'articles' })
   .from('articles')
   .groupBy('article_id');
 
@@ -53,20 +53,28 @@ exports.removeArticle = article_id => connection('articles')
   .del()
   .returning('*');
 
-exports.fetchCommentsById = (article_id, { limit = 10, sort_by = 'created_at', p = 1 }) => connection
-  .select(
-    'comments.comment_id',
-    'comments.votes',
-    'comments.created_at',
-    'comments.username as author',
-    'comments.body',
-  )
-  .from('comments')
-  .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
-  .limit(limit)
-  .orderBy(sort_by, 'desc')
-  .offset((p - 1) * limit)
-  .where('articles.article_id', '=', article_id);
+exports.fetchCommentsById = (
+  article_id,
+  {
+    limit = 10, sort_by = 'created_at', p = 1, sort_ascending = 'desc',
+  },
+) => {
+  if (sort_ascending === 'true') sort_ascending = 'asc';
+  return connection
+    .select(
+      'comments.comment_id',
+      'comments.votes',
+      'comments.created_at',
+      'comments.username as author',
+      'comments.body',
+    )
+    .from('comments')
+    .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
+    .limit(limit)
+    .orderBy(sort_by, sort_ascending)
+    .offset((p - 1) * limit)
+    .where('articles.article_id', '=', article_id);
+};
 
 exports.postCommentById = (comment, { article_id }) => {
   const newComment = { ...comment, article_id };

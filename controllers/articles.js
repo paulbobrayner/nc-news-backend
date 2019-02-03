@@ -11,7 +11,6 @@ const {
 } = require('../db/models/articles');
 
 exports.getArticles = (req, res, next) => {
-  // console.log(req.params);
   fetchArticles(req.query)
     .then(articles => Promise.all([getTotalCount(), articles]))
     .then(([total_count, articles]) => {
@@ -47,9 +46,11 @@ exports.deleteArticle = (req, res, next) => {
 };
 
 exports.getCommentsById = (req, res, next) => {
-  fetchCommentsById(req.params.article_id, req.query).then((comments) => {
-    res.status(200).send({ comments });
-  });
+  fetchCommentsById(req.params.article_id, req.query)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
 };
 
 exports.addCommentById = (req, res, next) => {

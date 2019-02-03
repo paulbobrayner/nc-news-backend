@@ -20,9 +20,8 @@ exports.seed = function (connection, Promise) {
         .into('articles')
         .returning('*');
     })
-    .then((article) => {
-      // console.log(articleData);
-      const ref = articleRef(article);
+    .then((articles) => {
+      const ref = articleRef(articles);
       const adjustComments = formatComments(ref, commentData);
       return connection
         .insert(adjustComments)
