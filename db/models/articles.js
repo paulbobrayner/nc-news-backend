@@ -20,12 +20,9 @@ exports.fetchArticles = ({
   .offset((p - 1) * limit)
   .orderBy(sort_by, order);
 
-// BELOW IS BROKEN - FIX IT
-exports.getTotalCount = () => connection
-  .select('articles')
-  .count({ total_count: 'articles' })
-  .from('articles')
-  .groupBy('article_id');
+exports.getTotalCount = () => connection('articles')
+  .count('article_id')
+  .then(([{ count }]) => count);
 
 exports.fetchArticleById = article_id => connection
   .select(

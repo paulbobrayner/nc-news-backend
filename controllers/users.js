@@ -24,16 +24,32 @@ exports.addUser = (req, res, next) => {
 };
 
 exports.getUserByUsername = (req, res, next) => {
-  fetchUserByUsername(req.params.username).then(([user]) => {
-    res.status(200).send({ user });
-  });
+  fetchUserByUsername(req.params.username)
+    .then(([user]) => {
+      if (!user) return Promise.reject({ status: 404, message: 'comment not found' });
+      return res.status(200).send({ user });
+    })
+    .catch(next);
 };
 
 exports.getArticlesByUser = (req, res, next) => {
-  fetchArticlesByUser(req.params.username, req.query)
+  const columns = ['title', 'votes', 'topic', 'article_id', 'created_at', 'username'];
+  let { sort_by, limit, p } = req.query;
+  if (!columns.includes(sort_by)) sort_by = 'created_at';
+  if (Number.isNaN(+p)) p = 1;
+  if (Number.isNaN(+limit)) limit = 10;
+  // console.log(req.params);
+  fetchArticlesByUser(req.params.username, {
+    ...req.query,
+    sort_by,
+    limit,
+    p,
+  })
     .then(articles => Promise.all([getTotalCount(req.params.username), articles]))
     .then(([total_count, articles]) => {
-      res.status(200).send({ total_count, articles });
+      // console.log(total_count);
+      if (!articles) return Promise.reject({ status: 404, message: 'comment not found' });
+      return res.status(200).send({ total_count, articles });
     })
     .catch(next);
 };

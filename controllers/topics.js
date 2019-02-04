@@ -24,10 +24,18 @@ exports.addTopic = (req, res, next) => {
 };
 
 exports.getArticlesFromTopic = (req, res, next) => {
-  fetchArticlesFromTopic(req.params, req.query)
+  const columns = ['title', 'votes', 'topic', 'article_id', 'created_at', 'username'];
+  let { sort_by, limit, p } = req.query;
+  if (!columns.includes(sort_by)) sort_by = 'created_at';
+  if (Number.isNaN(+p)) p = 1;
+  if (Number.isNaN(+limit)) limit = 10;
+  fetchArticlesFromTopic(req.params, {
+    ...req.query, sort_by, limit, p,
+  })
     .then(articles => Promise.all([getTotalCount(req.params), articles]))
-    .then(([total_count, articles]) => {
-      if (total_count.length === 0) return Promise.reject({ status: 404, message: 'article not found' });
+    .then(([count, articles]) => {
+      if (count.length === 0) return Promise.reject({ status: 404, message: 'article not found' });
+      const { total_count } = count[0];
       return res.status(200).send({ total_count, articles });
     })
     .catch(next);

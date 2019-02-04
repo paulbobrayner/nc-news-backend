@@ -66,7 +66,7 @@ describe('api', () => {
       .then(({ body }) => {
         expect(body.articles).to.have.length(9);
       }));
-    xit('GET status:404 client uses non existent topic name', () => request.get('/api/topics/peterpan/articles').expect(404));
+    it('GET status:404 client uses non existent topic name', () => request.get('/api/topics/peterpan/articles').expect(404));
 
     it('GET status:200 responds with author as the username within article object', () => request
       .get('/api/topics/mitch/articles')
@@ -93,12 +93,14 @@ describe('api', () => {
       .then(({ body }) => {
         expect(body.articles).to.have.length(9);
       }));
-    it('GET status:200 will default to giving back the requested amount', () => request
+    it('GET status:200 will default to giving back the requested limit', () => request
       .get('/api/topics/mitch/articles?limit=4')
       .expect(200)
       .then(({ body }) => {
+        // console.log(body)
         expect(body.articles).to.have.length(4);
       }));
+    it('GET status:200 client uses non existent path limit query but will return with default response', () => request.get('/api/topics/mitch/articles?limit=chickens').expect(200));
     it('GET status:200 will sort articles by date(created_at) (DEFAULT CASE) (DEFAULT DESC)', () => request
       .get('/api/topics/mitch/articles')
       .expect(200)
@@ -113,6 +115,7 @@ describe('api', () => {
         expect(body.articles[2].author).to.equal('icellusedkars');
         expect(body.articles[7].author).to.equal('butter_bridge');
       }));
+    it('GET status:200 client uses non existent path sort_by query but will return with default response', () => request.get('/api/topics/mitch/articles?sort_by=piglets').expect(200));
     it('GET status:200 will order articles by descending  (DEFAULT CASE) (DEFAULT sorted by --> created_at/date', () => request
       .get('/api/topics/mitch/articles ')
       .expect(200)
@@ -127,19 +130,24 @@ describe('api', () => {
         expect(body.articles[0].title).to.equal('Am I a cat?');
         expect(body.articles[5].title).to.equal('Student SUES Mitch!');
       }));
+    it('GET status:200 client uses non existent path limit query but will return with default response - desc', () => request.get('/api/topics/mitch/articles?order=makeitgodown').expect(200));
+
     it('GET status:200 will order articles by ascending when requested and by a requested column', () => request
       .get('/api/topics/mitch/articles?order=asc&&sort_by=title ')
       .expect(200)
       .then(({ body }) => {
+        // console.log(body)
         expect(body.articles[2].title).to.equal('Does Mitch predate civilisation?');
         expect(body.articles[3].title).to.equal('Eight pug gifs that remind me of mitch');
       }));
-    it('GET status:200 will order articles by page starting at 0 (DEFAULT CASE) default limit 10 ', () => request
+    it('GET status:200 will order articles by page starting at 1 (DEFAULT CASE) default limit 10 ', () => request
       .get('/api/topics/mitch/articles ')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles[3].author).to.equal('rogersop');
       }));
+    it('GET status:200 client uses non existent path limit query but will return with default response - page 1', () => request.get('/api/topics/mitch/articles?p=thisisnotapagenumber').expect(200));
+
     it('GET status:200 test 1/2 will order articles by page when requested, with a limit per page ', () => request
       .get('/api/topics/mitch/articles?p=2&&limit=3 ')
       .expect(200)
@@ -168,6 +176,29 @@ describe('api', () => {
           expect(body.article.title).to.equal('Should I sail the seven seas?');
         });
     });
+    it('POST status:404 client adds article to a non existent topic, returns 404', () => {
+      const article = {
+        title: 'Should I sail the seven seas?',
+        body: 'Just brainstorming sailing inspo on pinterest',
+        username: 'icellusedkars',
+      };
+      return request
+        .post('/api/topics/shrek/articles')
+        .send(article)
+        .expect(404);
+    });
+    it('POST status:400 bad request, body malformed - missing body', () => {
+      const article = {
+        title: 'Should I sail the seven seas?',
+      };
+      return request
+        .post('/api/topics/mitch/articles')
+        .send(article)
+        .expect(400);
+      // .then(({ body }) => {
+      //   expect(body.article.title).to.equal('Should I sail the seven seas?');
+      // });
+    });
   });
   describe('/articles', () => {
     it('GET status:200 responds with an array of article objects', () => request
@@ -188,7 +219,6 @@ describe('api', () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);// THIS IS BROKEN
         expect(body).contains.keys('total_count');
       }));
     it('GET status:404 client uses non existent path', () => request.get('/api/newspaper').expect(404));
@@ -205,6 +235,8 @@ describe('api', () => {
       .then(({ body }) => {
         expect(body.articles).to.have.length(3);
       }));
+    it('GET status:200 client uses non existent path limit query but will return with default response - 10', () => request.get('/api/articles?limit=thisisnotanumber').expect(200));
+
     it('GET status:200 will sort articles by date(created_at) (DEFAULT CASE) (DEFAULT DESC)', () => request
       .get('/api/articles')
       .expect(200)
@@ -215,12 +247,14 @@ describe('api', () => {
         );
       }));
     it('GET status:200 will sort articles by any column (DEFAULT DESC)', () => request
-      .get('/api/articles?sort_by=title ')
+      .get('/api/articles?sort_by=title')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles[2].title).to.equal("They're not exactly dogs, are they?");
         expect(body.articles[7].title).to.equal('Living in the shadow of a great man');
       }));
+    it('GET status:200 client uses non existent path sort_by query but will return with default response - created_at', () => request.get('/api/articles?sort_by=justsortit').expect(200));
+
     it('GET status:200 will order articles by descending  (DEFAULT CASE) (DEFAULT sorted by --> created_at/date', () => request
       .get('/api/articles ')
       .expect(200)
@@ -259,6 +293,8 @@ describe('api', () => {
         expect(body.articles[2].title).to.equal('They\'re not exactly dogs, are they?');
         expect(body.articles).to.have.length(3);
       }));
+    it('GET status:200 client uses non existent path limit query but will return with default response - page 1', () => request.get('/api/articles?p=thisisnotapagenumber').expect(200));
+
     it('GET status:200 will order articles by page when requested, with a limit per page with a requested sort by and order', () => request
       .get('/api/articles?p=4&&limit=2&&sort_by=title&&order=asc ')
       .expect(200)
@@ -267,7 +303,7 @@ describe('api', () => {
         expect(body.articles[1].title).to.equal('Sony Vaio; or, The Laptop');
         expect(body.articles).to.have.length(2);
       }));
-    it('GET status:200 client uses non existent path limit query but will respond with articles', () => request.get('/api/articles?limit=5billion').expect(200));
+    it('GET status:200 client uses non existent path limit query but will respond with articles', () => request.get('/api/articles?limit=billion').expect(200));
     it('GET status:200 responds with the articles requested by article id', () => request
       .get('/api/articles/3')
       .expect(200)
@@ -297,12 +333,26 @@ describe('api', () => {
       .then(({ body }) => {
         expect(body.article.votes).to.equal(103);
       }));
+    it('PATCH status:400 bad request', () => request
+      .patch('/api/articles/1')
+      .send({ inc_votes: 'fivehundred' })
+      .expect(400));
+    it('PATCH status:100, empty body ', () => request
+      .patch('/api/articles/1')
+      .send({ inc_votes: 2 })
+      .expect(100));
     it('DELETE status:204 can delete an article by article id', () => request
       .delete('/api/articles/2')
       .expect(204)
       .then(({ body }) => {
         expect(body).to.eql({});
       }));
+    it('DELETE status:404 path does not exist', () => request
+      .delete('/api/articles/2000')
+      .expect(404));
+    // .then(({ body }) => {
+    //   expect(body).to.eql({});
+    // }));
     it('GET status:200 test 1/2 responds with an array of comment objects for given articleid', () => request
       .get('/api/articles/5/comments')
       .expect(200)
@@ -333,6 +383,8 @@ describe('api', () => {
         //  console.log(body);
         expect(body.comments).to.have.length(3);
       }));
+    it('GET status:200 client uses non existent path limit query but will return with default response - 10', () => request.get('/api/articles/1/comments?limit=imnotanumber').expect(200));
+
     it('GET status:200 responds with comments sorted by date/created_at - DESC default (DEFAULT CASE)', () => request
       .get('/api/articles/1/comments')
       .expect(200)
@@ -349,6 +401,8 @@ describe('api', () => {
         expect(body.comments[2].author).to.equal('butter_bridge');
         expect(body.comments[2].votes).to.equal(14);
       }));
+    it('GET status:200 client uses non existent path sort_by query but will return with default response - created_at', () => request.get('/api/articles/1/comments?sort_by=nothing').expect(200));
+
     it('GET status:200 will order comments by page starting at 0 (DEFAULT CASE) default limit 10 ', () => request
       .get('/api/articles/1/comments')
       .expect(200)
@@ -356,6 +410,8 @@ describe('api', () => {
         expect(body.comments[3].body).to.equal('I hate streaming noses');
         expect(body.comments[4].body).to.equal('I hate streaming eyes even more');
       }));
+    it('GET status:200 client uses non existent path page query but will return with default response - page 1', () => request.get('/api/articles/1/comments?p=imnotanumber').expect(200));
+
     it('GET status:200 will order comments by page requested- default limit 10 ', () => request
       .get('/api/articles/1/comments?p=2')
       .expect(200)
@@ -417,6 +473,18 @@ describe('api', () => {
         // console.log(body)
         expect(body.comment.votes).to.equal(-97);
       }));
+    it('PATCH status:400 bad request', () => request
+      .patch('/api/articles/1/comments/4')
+      .send({ inc_votes: 'fivehundred' })
+      .expect(400));
+    it('PATCH status:200 no body given, results in an unmodified comment', () => request
+      .patch('/api/articles/1/comments/4')
+      .send({})
+      .expect(200));
+    it.only('PATCH status:404 not found - non existent article_id used', () => request
+      .patch('/api/articles/2000/comments/4')
+      .send({ inc_votes: 3 })
+      .expect(404));
     it('PATCH status:200 can change the vote property up or down', () => request
       .patch('/api/articles/1/comments/2')
       .send({ inc_votes: -20 })
@@ -432,6 +500,9 @@ describe('api', () => {
         // console.log(body);
         expect(body).to.eql({});
       }));
+    it('DELETE status:404 path does not exist', () => request
+      .delete('/api/articles/2000/comments/2')
+      .expect(404));
   });
   describe('/users', () => {
     it('GET status:200 responds with an array of user objects', () => request
@@ -474,12 +545,11 @@ describe('api', () => {
         expect(body.user.username).to.equal('butter_bridge');
         expect(body.user.name).to.equal('jonny');
       }));
-    xit('GET status:404 client uses non existent path', () => request.get('/api/users/wrongpath').expect(404));
+    it('GET status:404 client uses non existent path- username doesnt exist', () => request.get('/api/users/wrongusername').expect(404));
     it('GET status:200 responds with an array of article objects created by a user', () => request
       .get('/api/users/butter_bridge/articles')
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);
         expect(body.articles).to.have.length(3);
         expect(body.articles[0].title).to.equal('Living in the shadow of a great man');
       }));
@@ -487,15 +557,13 @@ describe('api', () => {
       .get('/api/users/butter_bridge/articles')
       .expect(200)
       .then(({ body }) => {
-        //  console.log(body.articles);
         expect(body.articles[0].comment_count).to.equal('13');
         expect(body.articles[0]).contains.keys('comment_count');
       }));
-    xit('GET status:200 displays the total number of articles by user', () => request
+    it('GET status:200 displays the total number of articles by user', () => request
       .get('/api/users/butter_bridge/articles')
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);
         expect(body).contains.keys('total_count');
       }));
     it('GET status:200 will default to giving back 10 articles by user as max (DEFAULT CASE)', () => request
@@ -512,6 +580,8 @@ describe('api', () => {
         expect(body.articles).to.have.length(3);
         expect(body.articles[0].title).to.equal('Sony Vaio; or, The Laptop');
       }));
+    it('GET status:200 client uses non existent path limit query but will return with default response - 10', () => request.get('/api/users/icellusedkars/articles?limit=iwanttobeanumber').expect(200));
+
     it('GET status:200 responds with articles by user sorted by date/created_at column - DESC default (DEFAULT CASE)', () => request
       .get('/api/users/icellusedkars/articles')
       .expect(200)
@@ -528,6 +598,8 @@ describe('api', () => {
         expect(body.articles[0].article_id).to.equal(7);
         expect(body.articles[2].title).to.equal('Eight pug gifs that remind me of mitch');
       }));
+    it('GET status:200 client uses non existent path sort_by query but will return with default response - created_at', () => request.get('/api/users/icellusedkars/articles?sort_by=awrongtitle').expect(200));
+
     it('GET status:200 will order articles by user by descending  (DEFAULT CASE) (DEFAULT sorted by --> created_at/date', () => request
       .get('/api/users/rogersop/articles ')
       .expect(200)
@@ -550,6 +622,8 @@ describe('api', () => {
       .then(({ body }) => {
         expect(body.articles[3].title).to.equal('Z');
       }));
+    it('GET status:200 client uses non existent path page query but will return with default response - page 1', () => request.get('/api/users/icellusedkars/articles?p=iwanttobeanumber').expect(200));
+
     it('GET status:200 will order articles by user by requested page default limit 10 ', () => request
       .get('/api/users/icellusedkars/articles?p=2 ')
       .expect(200)

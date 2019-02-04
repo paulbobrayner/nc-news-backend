@@ -36,10 +36,8 @@ exports.fetchArticlesByUser = (
   .orderBy(sort_by, order);
 
 // FIX TOTAL COUNT - copy topic which is working
-exports.getTotalCount = username => connection
-  .select('articles')
-  .count({ total_count: 'articles' })
-  .from('articles')
-// .rightJoin('articles', 'users.username', '=', 'articles.username')
-  .groupBy('articles')
-  .where('articles.username', '=', username);
+
+exports.getTotalCount = username => connection('articles')
+  .count('article_id')
+  .where('articles.username', '=', username)
+  .then(([{ count }]) => count);

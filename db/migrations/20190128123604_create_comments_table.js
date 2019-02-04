@@ -12,7 +12,8 @@ exports.up = function (connection, Promise) {
     commentsTable
       .integer('article_id')
       .references('articles.article_id')
-      .notNullable();
+      .notNullable()
+      .onDelete('cascade');
     commentsTable
       .integer('votes')
       .defaultTo(0)
