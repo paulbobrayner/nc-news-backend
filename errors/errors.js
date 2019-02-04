@@ -20,10 +20,10 @@ exports.handle404 = (err, req, res, next) => {
   if (codes[err.code]) res.status(404).send({ msg: codes[err.code] });
   else next(err);
 };
-exports.handle405 = (err, req, res, next) => {
+exports.handle405 = (req, res, next) => {
   // console.log(err);
-  if (err.status === 405) res.status(405).send({ msg: 'method not allowed' });
-  else next(err);
+  res.status(405).send({ msg: 'invalid method for this endpoint' });
+  // else next(err);
 };
 exports.handle422 = (err, req, res, next) => {
   // console.log(err);

@@ -12,7 +12,12 @@ describe('api', () => {
   after(() => {
     connection.destroy();
   });
-
+  it('GET 200, responds with a homepage containing a JSON object with all endpoints', () => request
+    .get('/api')
+    .expect(200)
+    .then(({ body }) => {
+      expect(body).contains.keys('/api/topics', '/api/topics/:topic/articles', '/api/articles', '/api/articles/:article_id', '/api/articles/:article_id/comments', '/api/users', '/api/users/:username', '/api/users/:username/articles');
+    }));
   describe('/topics', () => {
     it('GET status:200 responds with an array of topic objects', () => request
       .get('/api/topics')
@@ -21,6 +26,9 @@ describe('api', () => {
         expect(body.topics).to.be.an('array');
         expect(body.topics[0]).contains.keys('slug', 'description');
       }));
+    it('PATCH status 405 invalid method on this endpoint', () => request
+      .patch('/api/topics')
+      .expect(405));
     it('POST status:201 responds with the posted topic object', () => {
       const topic = {
         description: 'sloths like to hang on trees',
@@ -208,6 +216,9 @@ describe('api', () => {
         expect(body.articles).to.be.an('array');
         expect(body.articles[0]).contains.keys('votes', 'topic', 'article_id', 'author');
       }));
+    it('PATCH status 405 invalid method on this endpoint', () => request
+      .patch('/api/articles')
+      .expect(405));
     it('GET status:200 responds with a comment count property within article objects - DESC by DEFAULT sorted by created_at default', () => request
       .get('/api/articles')
       .expect(200)
@@ -221,7 +232,6 @@ describe('api', () => {
       .then(({ body }) => {
         expect(body).contains.keys('total_count');
       }));
-    it('GET status:404 client uses non existent path', () => request.get('/api/newspaper').expect(404));
     it('GET status:200 will default to giving back 10 articles as max (DEFAULT CASE)', () => request
       .get('/api/articles')
       .expect(200)
@@ -337,22 +347,22 @@ describe('api', () => {
       .patch('/api/articles/1')
       .send({ inc_votes: 'fivehundred' })
       .expect(400));
-    it('PATCH status:100, empty body ', () => request
+    it('PATCH status:200, no body passed, but responds with unmodified article, votes are not modified ', () => request
       .patch('/api/articles/1')
-      .send({ inc_votes: 2 })
-      .expect(100));
+      .send({})
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.body).to.equal('I find this existence challenging');
+      }));
     it('DELETE status:204 can delete an article by article id', () => request
       .delete('/api/articles/2')
       .expect(204)
       .then(({ body }) => {
         expect(body).to.eql({});
       }));
-    it('DELETE status:404 path does not exist', () => request
+    it('DELETE status:404 path does not exist non existent article id', () => request
       .delete('/api/articles/2000')
       .expect(404));
-    // .then(({ body }) => {
-    //   expect(body).to.eql({});
-    // }));
     it('GET status:200 test 1/2 responds with an array of comment objects for given articleid', () => request
       .get('/api/articles/5/comments')
       .expect(200)
@@ -364,7 +374,6 @@ describe('api', () => {
       .get('/api/articles/9/comments')
       .expect(200)
       .then(({ body }) => {
-        //  console.log(body);
         expect(body.comments).to.have.length(2);
         expect(body.comments[0].votes).to.equal(16);
       }));
@@ -372,7 +381,6 @@ describe('api', () => {
       .get('/api/articles/1/comments')
       .expect(200)
       .then(({ body }) => {
-        //  console.log(body);
         expect(body.comments).to.have.length(10);
         expect(body.comments[0].votes).to.equal(14);
       }));
@@ -380,7 +388,6 @@ describe('api', () => {
       .get('/api/articles/1/comments?limit=3')
       .expect(200)
       .then(({ body }) => {
-        //  console.log(body);
         expect(body.comments).to.have.length(3);
       }));
     it('GET status:200 client uses non existent path limit query but will return with default response - 10', () => request.get('/api/articles/1/comments?limit=imnotanumber').expect(200));
@@ -389,7 +396,6 @@ describe('api', () => {
       .get('/api/articles/1/comments')
       .expect(200)
       .then(({ body }) => {
-        //  console.log(body);
         expect(body.comments[2].author).to.equal('icellusedkars');
         expect(body.comments[2].votes).to.equal(-100);
       }));
@@ -397,7 +403,6 @@ describe('api', () => {
       .get('/api/articles/1/comments?sort_by=votes')
       .expect(200)
       .then(({ body }) => {
-        //  console.log(body);
         expect(body.comments[2].author).to.equal('butter_bridge');
         expect(body.comments[2].votes).to.equal(14);
       }));
@@ -450,7 +455,6 @@ describe('api', () => {
         .send(comment)
         .expect(201)
         .then(({ body }) => {
-          // console.log(body);
           expect(body.comment.body).to.equal('this is the worst article ever');
           expect(body.comment.article_id).to.equal(1);
         });
@@ -470,7 +474,6 @@ describe('api', () => {
       .send({ inc_votes: 3 })
       .expect(200)
       .then(({ body }) => {
-        // console.log(body)
         expect(body.comment.votes).to.equal(-97);
       }));
     it('PATCH status:400 bad request', () => request
@@ -480,9 +483,16 @@ describe('api', () => {
     it('PATCH status:200 no body given, results in an unmodified comment', () => request
       .patch('/api/articles/1/comments/4')
       .send({})
-      .expect(200));
-    it.only('PATCH status:404 not found - non existent article_id used', () => request
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment.body).to.equal(' I carry a log — yes. Is it funny to you? It is not to me.');
+      }));
+    it('PATCH status:404 not found - non existent article_id used', () => request
       .patch('/api/articles/2000/comments/4')
+      .send({ inc_votes: 3 })
+      .expect(404));
+    it('PATCH status:404 not found - non existent comment_id used', () => request
+      .patch('/api/articles/2/comments/4000')
       .send({ inc_votes: 3 })
       .expect(404));
     it('PATCH status:200 can change the vote property up or down', () => request
@@ -490,14 +500,12 @@ describe('api', () => {
       .send({ inc_votes: -20 })
       .expect(200)
       .then(({ body }) => {
-        // console.log(body)
         expect(body.comment.votes).to.equal(-6);
       }));
     it('DELETE status:204 can delete an comment by article id and comment id', () => request
-      .delete('/api/articles/2/comments/2')
+      .delete('/api/articles/1/comments/2')
       .expect(204)
       .then(({ body }) => {
-        // console.log(body);
         expect(body).to.eql({});
       }));
     it('DELETE status:404 path does not exist', () => request
@@ -512,6 +520,9 @@ describe('api', () => {
         expect(body.users).to.have.length(3);
         expect(body.users[0]).contains.keys('username', 'avatar_url', 'name');
       }));
+    it('DELETE status 405 invalid method on this endpoint', () => request
+      .delete('/api/users')
+      .expect(405));
     it('POST status:201 responds with posted user object', () => {
       const user = {
         username: 'testingtesting',

@@ -256,7 +256,7 @@ GET /api/users/:username/articles
 
 Responds with:
 
-<!-- - a `total_count` property, displaying the total number of articles created by the given user -->
+- a `total_count` property, displaying the total number of articles created by the given user
 
 - an `articles` array of article objects created by the given user
 - each article should have:
@@ -280,7 +280,7 @@ Queries
 GET /api
 ```
 
-<!-- - Serves JSON describing all the available endpoints on your API -->
+- Serves JSON describing all the available endpoints on your API
 
 ### Step 3 - Hosting
 

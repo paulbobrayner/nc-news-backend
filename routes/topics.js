@@ -5,15 +5,18 @@ const {
   getArticlesFromTopic,
   addArticle,
 } = require('../controllers/topics.js');
+const { handle405 } = require('../errors/errors');
 
 topicsRouter
   .route('/')
   .get(getTopics)
-  .post(addTopic);
+  .post(addTopic)
+  .all(handle405);
 
 topicsRouter
   .route('/:topic/articles')
   .get(getArticlesFromTopic)
-  .post(addArticle);
+  .post(addArticle)
+  .all(handle405);
 
 module.exports = { topicsRouter };

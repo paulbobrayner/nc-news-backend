@@ -40,7 +40,7 @@ exports.fetchArticleById = article_id => connection
   .groupBy('articles.article_id')
   .where('articles.article_id', '=', article_id);
 
-exports.modifyArticle = (article_id, votes) => connection('articles')
+exports.modifyArticle = (article_id, votes = 0) => connection('articles')
   .where({ article_id })
   .increment('votes', votes)
   .returning('*');
@@ -84,7 +84,7 @@ exports.postCommentById = (comment, { article_id }) => {
   );
 };
 
-exports.modifyComment = (article_id, comment_id, votes) => connection('comments')
+exports.modifyComment = (article_id, comment_id, votes = 0) => connection('comments')
   .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
   .where({ article_id })
   .where({ comment_id })

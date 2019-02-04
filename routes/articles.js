@@ -9,8 +9,12 @@ const {
   updateCommentById,
   deleteComment,
 } = require('../controllers/articles.js');
+const { handle405 } = require('../errors/errors');
 
-articlesRouter.route('/').get(getArticles);
+articlesRouter
+  .route('/')
+  .get(getArticles)
+  .all(handle405);
 articlesRouter
   .route('/:article_id')
   .get(getArticleById)

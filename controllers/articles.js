@@ -13,7 +13,6 @@ const {
 exports.getArticles = (req, res, next) => {
   const columns = ['title', 'votes', 'topic', 'article_id', 'created_at', 'username'];
   let { sort_by, limit, p } = req.query;
-  // console.log(p);
   if (Number.isNaN(+p)) p = 1;
   if (Number.isNaN(+limit)) limit = 10;
   if (!columns.includes(sort_by)) sort_by = 'created_at';
@@ -25,6 +24,7 @@ exports.getArticles = (req, res, next) => {
   })
     .then(articles => Promise.all([getTotalCount(), articles]))
     .then(([total_count, articles]) => {
+      // console.log(total_count);
       if (total_count.length === 0) return Promise.reject({ status: 404, message: 'article not found' });
       return res.status(200).send({ total_count, articles });
     })
@@ -32,10 +32,8 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getArticleById = (req, res, next) => {
-  // console.log(req.params.article_id);
   fetchArticleById(req.params.article_id)
     .then(([article]) => {
-      // console.log(article);
       if (!article) return Promise.reject({ status: 404, message: 'article not found' });
       return res.status(200).send({ article });
     })
@@ -44,12 +42,10 @@ exports.getArticleById = (req, res, next) => {
 
 exports.updateArticleById = (req, res, next) => {
   const { inc_votes } = req.body;
-  // console.log(Number.isNaN(inc_votes));
-  if (Number.isNaN(+inc_votes)) next({ code: 400 });
+  if (Number.isNaN(+inc_votes) && inc_votes) next({ code: 400 });
   else {
     modifyArticle(req.params.article_id, inc_votes)
       .then(([article]) => {
-        // console.log(article);
         if (!article) return Promise.reject({ status: 404, message: 'article not found' });
         return res.status(200).send({ article });
       })
@@ -60,7 +56,6 @@ exports.updateArticleById = (req, res, next) => {
 exports.deleteArticle = (req, res, next) => {
   removeArticle(req.params.article_id)
     .then((result) => {
-      // console.log(result);
       if (result.length === 0) return Promise.reject({ status: 404, message: 'article id not found' });
       return res.status(204).send(result);
     })
@@ -97,11 +92,12 @@ exports.addCommentById = (req, res, next) => {
 
 exports.updateCommentById = (req, res, next) => {
   const { inc_votes } = req.body;
-  // console.log(Number.isNaN(inc_votes));
-  if (Number.isNaN(+inc_votes)) next({ code: 400 });
+  // console.log(inc_votes);
+  if (Number.isNaN(+inc_votes) && inc_votes) next({ code: 400 });
   else {
     modifyComment(req.params.article_id, req.params.comment_id, inc_votes)
       .then(([comment]) => {
+        // console.log(comment);
         if (!comment) return Promise.reject({ status: 404, message: 'comment not found' });
         return res.status(200).send({ comment });
       })
@@ -112,7 +108,6 @@ exports.updateCommentById = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
   removeComment(req.params.article_id, req.params.comment_id)
     .then((result) => {
-      // console.log(result);
       if (result.length === 0) return Promise.reject({ status: 404, message: 'article id not found' });
       return res.status(204).send(result);
     })

@@ -5,11 +5,13 @@ const {
   getUserByUsername,
   getArticlesByUser,
 } = require('../controllers/users.js');
+const { handle405 } = require('../errors/errors');
 
 usersRouter
   .route('/')
   .get(getUsers)
-  .post(addUser);
+  .post(addUser)
+  .all(handle405);
 usersRouter.route('/:username').get(getUserByUsername);
 usersRouter.route('/:username/articles').get(getArticlesByUser);
 
