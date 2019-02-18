@@ -195,7 +195,7 @@ Queries
 * limit, which limits the number of responses (defaults to 10)
 * sort_by, which sorts the articles by any valid column (defaults to date)
   - p, stands for page which specifies the page at which to start (calculated using limit)
-    - sort_ascending, when "true" returns the results sorted in ascending order (defaults to descending)
+    <!-- - sort_ascending, when "true" returns the results sorted in ascending order (defaults to descending) -->
 
 ```http
 POST /api/articles/:article_id/comments

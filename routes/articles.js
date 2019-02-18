@@ -19,14 +19,17 @@ articlesRouter
   .route('/:article_id')
   .get(getArticleById)
   .patch(updateArticleById)
-  .delete(deleteArticle);
+  .delete(deleteArticle)
+  .all(handle405);
 articlesRouter
   .route('/:article_id/comments')
   .get(getCommentsById)
-  .post(addCommentById);
+  .post(addCommentById)
+  .all(handle405);
 articlesRouter
   .route('/:article_id/comments/:comment_id')
   .patch(updateCommentById)
-  .delete(deleteComment);
+  .delete(deleteComment)
+  .all(handle405);
 
 module.exports = { articlesRouter };

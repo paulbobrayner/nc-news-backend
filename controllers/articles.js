@@ -11,7 +11,7 @@ const {
 } = require('../db/models/articles');
 
 exports.getArticles = (req, res, next) => {
-  const columns = ['title', 'votes', 'topic', 'article_id', 'created_at', 'username'];
+  const columns = ['title', 'votes', 'topic', 'article_id', 'created_at', 'author'];
   let { sort_by, limit, p } = req.query;
   if (Number.isNaN(+p)) p = 1;
   if (Number.isNaN(+limit)) limit = 10;
@@ -63,7 +63,7 @@ exports.deleteArticle = (req, res, next) => {
 };
 
 exports.getCommentsById = (req, res, next) => {
-  const columns = ['body', 'votes', 'comment_id', 'created_at', 'username'];
+  const columns = ['body', 'votes', 'comment_id', 'created_at', 'author'];
   let { sort_by, limit, p } = req.query;
   if (Number.isNaN(+p)) p = 1;
   if (Number.isNaN(+limit)) limit = 10;
