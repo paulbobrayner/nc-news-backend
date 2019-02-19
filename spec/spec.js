@@ -442,7 +442,7 @@ describe('api', () => {
       .get('/api/articles/1/comments?sort_ascending=true')
       .expect(200)
       .then(({ body }) => {
-        //console.log(body);
+        // console.log(body);
         expect(body.comments[0].author).to.equal('butter_bridge');
         expect(body.comments[2].body).to.equal('Massive intercranial brain haemorrhage');
       }));
