@@ -123,6 +123,14 @@ describe('api', () => {
         expect(body.articles[2].author).to.equal('icellusedkars');
         expect(body.articles[7].author).to.equal('butter_bridge');
       }));
+    it('GET status:200 will sort articles by comment count (DEFAULT DESC)', () => request
+      .get('/api/topics/mitch/articles?sort_by=comment_count ')
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.articles[0].author).to.equal('butter_bridge');
+        expect(body.articles[8].author).to.equal('icellusedkars');
+      }));
     it('GET status:200 client uses non existent path sort_by query but will return with default response', () => request.get('/api/topics/mitch/articles?sort_by=piglets').expect(200));
     it('GET status:200 will order articles by descending  (DEFAULT CASE) (DEFAULT sorted by --> created_at/date', () => request
       .get('/api/topics/mitch/articles ')

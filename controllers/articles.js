@@ -11,7 +11,15 @@ const {
 } = require('../db/models/articles');
 
 exports.getArticles = (req, res, next) => {
-  const columns = ['title', 'votes', 'topic', 'article_id', 'created_at', 'author'];
+  const columns = [
+    'title',
+    'votes',
+    'topic',
+    'article_id',
+    'created_at',
+    'author',
+    'comment_count',
+  ];
   let { sort_by, limit, p } = req.query;
   if (Number.isNaN(+p)) p = 1;
   if (Number.isNaN(+limit)) limit = 10;

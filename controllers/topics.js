@@ -24,13 +24,24 @@ exports.addTopic = (req, res, next) => {
 };
 
 exports.getArticlesFromTopic = (req, res, next) => {
-  const columns = ['title', 'votes', 'topic', 'article_id', 'created_at', 'username'];
+  const columns = [
+    'title',
+    'votes',
+    'topic',
+    'article_id',
+    'created_at',
+    'username',
+    'comment_count',
+  ];
   let { sort_by, limit, p } = req.query;
   if (!columns.includes(sort_by)) sort_by = 'created_at';
   if (Number.isNaN(+p)) p = 1;
   if (Number.isNaN(+limit)) limit = 10;
   fetchArticlesFromTopic(req.params, {
-    ...req.query, sort_by, limit, p,
+    ...req.query,
+    sort_by,
+    limit,
+    p,
   })
     .then(articles => Promise.all([getTotalCount(req.params), articles]))
     .then(([count, articles]) => {
