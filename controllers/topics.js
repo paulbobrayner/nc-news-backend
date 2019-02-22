@@ -45,6 +45,7 @@ exports.getArticlesFromTopic = (req, res, next) => {
   })
     .then(articles => Promise.all([getTotalCount(req.params), articles, fetchTopics()]))
     .then(([count, articles, topics]) => {
+      console.log(count);
       const foundtopic = topics.find(topic => topic.slug === req.params.topic);
       if (!foundtopic) return Promise.reject({ status: 404, message: 'article not found' });
       const { total_count } = count[0];
