@@ -43,9 +43,10 @@ exports.getArticlesFromTopic = (req, res, next) => {
     limit,
     p,
   })
-    .then(articles => Promise.all([getTotalCount(req.params), articles]))
-    .then(([count, articles]) => {
-      if (count.length === 0) return Promise.reject({ status: 404, message: 'article not found' });
+    .then(articles => Promise.all([getTotalCount(req.params), articles, fetchTopics()]))
+    .then(([count, articles, topics]) => {
+      const foundtopic = topics.find(topic => topic.slug === req.params.topic);
+      if (!foundtopic) return Promise.reject({ status: 404, message: 'article not found' });
       const { total_count } = count[0];
       return res.status(200).send({ total_count, articles });
     })
@@ -53,8 +54,6 @@ exports.getArticlesFromTopic = (req, res, next) => {
 };
 
 exports.addArticle = (req, res, next) => {
-  // console.log(req.body);
-  // console.log(req.params);
   postArticle(req.body, req.params)
     .then(([article]) => {
       res.status(201).send({ article });
