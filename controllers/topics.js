@@ -50,7 +50,10 @@ exports.getArticlesFromTopic = (req, res, next) => {
       const { total_count } = count[0];
       return res.status(200).send({ total_count, articles });
     })
-    .catch(next);
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 };
 
 exports.addArticle = (req, res, next) => {
