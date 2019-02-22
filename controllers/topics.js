@@ -49,7 +49,7 @@ exports.getArticlesFromTopic = (req, res, next) => {
       const foundtopic = topics.find(topic => topic.slug === req.params.topic);
       if (!foundtopic) return Promise.reject({ status: 404, message: 'article not found' });
       const { total_count } = count[0];
-
+      console.log(count[0]);
       return res.status(200).send({ total_count, articles });
     })
     .catch((err) => {
